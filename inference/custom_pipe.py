@@ -157,10 +157,10 @@ class SD4MatchPipe:
                 prompt = self.captioner(
                     src_feature=src_feat, trg_feature=trg_feat)
 
-                src_tens = self.transforms(src_img).cuda()
+                src_tens = self.transforms(src_img).to(self.device)
                 src_tens = src_tens.unsqueeze(0)
 
-                trg_tens = self.transforms(trg_img).cuda()
+                trg_tens = self.transforms(trg_img).to(self.device)
                 trg_tens = trg_tens.unsqueeze(0)
 
                 src_featmaps = self.feature_extractor(
