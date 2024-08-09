@@ -5,7 +5,7 @@ import warnings
 from typing import Any, Callable, Dict, List, Optional, Union
 
 import torch
-from transformers import CLIPImageProcessor, CLIPTextModel, CLIPTokenizer
+from transformers import CLIPImageProcessor, CLIPTextModel, CLIPTokenizer, CLIPVisionModelWithProjection
 
 from diffusers.configuration_utils import FrozenDict
 from diffusers.image_processor import VaeImageProcessor
@@ -16,10 +16,11 @@ from diffusers.utils import (
     deprecate,
     is_accelerate_available,
     is_accelerate_version,
-    logging,
-    randn_tensor,
+    logging,    
     replace_example_docstring,
 )
+from diffusers.utils.torch_utils import randn_tensor
+
 logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
 
 from diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
@@ -96,6 +97,7 @@ class CustomStableDiffusionPipeline(StableDiffusionPipeline):
         scheduler: KarrasDiffusionSchedulers,
         safety_checker: StableDiffusionSafetyChecker,
         feature_extractor: CLIPImageProcessor,
+        image_encoder: CLIPVisionModelWithProjection = None,
         requires_safety_checker: bool = True,
     ):
         super().__init__(
@@ -106,9 +108,9 @@ class CustomStableDiffusionPipeline(StableDiffusionPipeline):
             scheduler,
             safety_checker,
             feature_extractor,
+            image_encoder,
             requires_safety_checker
         )
-    
 
     def _encode_prompt(
         self,
